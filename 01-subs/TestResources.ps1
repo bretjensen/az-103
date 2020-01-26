@@ -1,6 +1,5 @@
 #Login-AzAccount
 #Get-AzSubscription
-#Set-AzContext "IW Azure Hack"
 
 (Get-AzResource -ResourceGroupName brett-103 -Name "Ubut-1").Tags
 (Get-AzResource -Tag @{Project = "" }).Name
