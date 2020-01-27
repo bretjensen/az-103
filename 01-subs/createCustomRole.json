@@ -1,0 +1,13 @@
+{
+  "Name": "BJ - Network Resource Viewer",
+  "IsCustom": true,
+  "Description": "Allows reading Azure network resources.",
+  "Actions": [
+    "Microsoft.Network/*/read"
+  ],
+  "NotActions": [
+  ],
+  "AssignableScopes": [
+    "/subscriptions/<Subscription ID>"
+  ]
+}
