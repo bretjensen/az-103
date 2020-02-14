@@ -1,0 +1,352 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DenyOutsideEEA",
+            "Effect": "Deny",
+            "NotAction": [
+                "acm:*",
+                "application-autoscaling:*",
+                "autoscaling:*",
+                "cloudformation:*",
+                "cloudwatch:*",
+                "codebuild:*",
+                "codecommit:*",
+                "datapipeline:*",
+                "dynamodb:*",
+                "ec2:*",
+                "ecr:*",
+                "ecs:*",
+                "elasticbeanstalk:*",
+                "elasticloadbalancing:*",
+                "elasticmapreduce:*",
+                "events:*",
+                "iam:*",
+                "kms:*",
+                "lambda:*",
+                "logs:*",
+                "pi:*",
+                "rds:*",
+                "route53:*",
+                "s3:*",
+                "secretsmanager:*",
+                "serverlessrepo:*",
+                "servicediscovery:*",
+                "sns:*",
+                "sqs:*",
+                "ssm:*",
+                "tag:*"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringNotEquals": {
+                    "aws:RequestedRegion": [
+                        "eu-central-1",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3",
+                        "us-east-1"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "S3",
+            "Effect": "Allow",
+            "Action": "s3:*",
+            "Resource": "*"
+        },
+        {
+            "Sid": "DenyS3WriteOusideEEA",
+            "Effect": "Deny",
+            "Action": [
+                "s3:put*",
+                "s3:create*",
+                "s3:delete*"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringNotEquals": {
+                    "aws:RequestedRegion": [
+                        "eu-central-1",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "LimitEC2",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:*",
+                "autoscaling:*",
+                "cloudwatch:*",
+                "elasticloadbalancing:*"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "aws:RequestedRegion": [
+                        "eu-central-1",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "LimitRDS",
+            "Effect": "Allow",
+            "Action": [
+                "rds:*",
+                "application-autoscaling:*",
+                "logs:*",
+                "pi:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "LimitElasticBeanstalk",
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:*",
+                "codebuild:BatchGet*",
+                "codebuild:Get*",
+                "codebuild:List*",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild",
+                "codecommit:GetBranch",
+                "codecommit:GetCommit",
+                "codecommit:GetRepository",
+                "codecommit:ListBranches",
+                "ecr:*",
+                "ecs:*",
+                "elasticbeanstalk:*",
+                "sns:*",
+                "sqs:*"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "aws:RequestedRegion": [
+                        "eu-central-1",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3"
+                    ]
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:AddRoleToInstanceProfile",
+                "iam:CreateInstanceProfile",
+                "iam:CreateRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::*:role/aws-elasticbeanstalk*",
+                "arn:aws:iam::*:instance-profile/aws-elasticbeanstalk*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Resource": "arn:aws:iam::*:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling*",
+            "Condition": {
+                "StringLike": {
+                    "iam:AWSServiceName": "autoscaling.amazonaws.com"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Resource": "arn:aws:iam::*:role/aws-service-role/elasticbeanstalk.amazonaws.com/AWSServiceRoleForElasticBeanstalk*",
+            "Condition": {
+                "StringLike": {
+                    "iam:AWSServiceName": "elasticbeanstalk.amazonaws.com"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": "iam:AttachRolePolicy",
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "iam:PolicyArn": [
+                        "arn:aws:iam::aws:policy/AWSElasticBeanstalk*",
+                        "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalk*"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "LimitDDB",
+            "Effect": "Allow",
+            "Action": [
+                "datapipeline:*",
+                "dynamodb:*",
+                "elasticmapreduce:*",
+                "lambda:*"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "aws:RequestedRegion": [
+                        "eu-central-1",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3"
+                    ]
+                }
+            }
+        },
+        {
+            "Action": "iam:PassRole",
+            "Effect": "Allow",
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "iam:PassedToService": [
+                        "application-autoscaling.amazonaws.com",
+                        "dax.amazonaws.com"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "LinkedServiceRole",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole",
+                "iam:UpdateRoleDescription",
+                "iam:DeleteServiceLinkedRole",
+                "iam:GetServiceLinkedRoleDeletionStatus"
+            ],
+            "Resource": "arn:aws:iam::*:role/aws-service-role/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "iam:AWSServiceName": [
+                        "autoscaling.amazonaws.com",
+                        "ec2scheduled.amazonaws.com",
+                        "elasticloadbalancing.amazonaws.com",
+                        "rds.amazonaws.com",
+                        "rds.application-autoscaling.amazonaws.com",
+                        "replication.dynamodb.amazonaws.com",
+                        "dax.amazonaws.com",
+                        "dynamodb.application-autoscaling.amazonaws.com",
+                        "spot.amazonaws.com",
+                        "spotfleet.amazonaws.com"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "LimitECS",
+            "Effect": "Allow",
+            "Action": [
+                "events:DeleteRule",
+                "events:DescribeRule",
+                "events:ListRuleNamesByTarget",
+                "events:ListTargetsByRule",
+                "events:PutRule",
+                "events:PutTargets",
+                "events:RemoveTargets",
+                "route53:CreateHostedZone",
+                "route53:DeleteHostedZone",
+                "route53:GetHealthCheck",
+                "route53:GetHostedZone",
+                "route53:ListHostedZonesByName",
+                "servicediscovery:CreatePrivateDnsNamespace",
+                "servicediscovery:CreateService",
+                "servicediscovery:GetNamespace",
+                "servicediscovery:GetOperation",
+                "servicediscovery:GetService",
+                "servicediscovery:ListNamespaces",
+                "servicediscovery:ListServices",
+                "servicediscovery:UpdateService",
+                "ssm:GetParameter",
+                "ssm:GetParameters",
+                "ssm:GetParametersByPath"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "aws:RequestedRegion": [
+                        "eu-central-1",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "LimitECR",
+            "Effect": "Allow",
+            "Action": [
+                "kms:DescribeKey",
+                "kms:ListAliases",
+                "kms:ListKeys",
+                "secretsmanager:*",
+                "serverlessrepo:CreateCloudFormationChangeSet",
+                "tag:GetResources"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "aws:RequestedRegion": [
+                        "eu-central-1",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "LimitACM",
+            "Effect": "Allow",
+            "Action": [
+                "acm:DescribeCertificate",
+                "acm:ListCertificates",
+                "acm:ListTagsForCertificate"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "LimitIAM",
+            "Effect": "Allow",
+            "Action": [
+                "iam:AddRoleToInstanceProfile",
+                "iam:AttachRolePolicy",
+                "iam:CreateInstanceProfile",
+                "iam:CreateRole",
+                "iam:CreateServiceLinkedRole",
+                "iam:UpdateRoleDescription",
+                "iam:DeleteServiceLinkedRole",
+                "iam:GetServiceLinkedRoleDeletionStatus",
+                "iam:GetPolicyVersion",
+                "iam:GetRole",
+                "iam:GetRolePolicy",
+                "iam:ListAttachedRolePolicies",
+                "iam:ListInstanceProfiles",
+                "iam:ListRolePolicies",
+                "iam:ListRoles",
+                "iam:ListServerCertificates",
+                "iam:PassRole"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

@@ -6,4 +6,5 @@ $definition = New-AzPolicyDefinition -Name "allowed-locations" -DisplayName "BJ 
     -Parameter "https://raw.githubusercontent.com/Azure/azure-policy/master/samples/built-in-policy/allowed-locations/azurepolicy.parameters.json" `
     -Mode All
 
+    $assignment = New-AzPolicyAssignment -Name "only West UK" -Scope $rg.ResourceId -listOfAllowedLocations "UK West" -PolicyDefinition $definition
     
